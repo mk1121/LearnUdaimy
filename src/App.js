@@ -1,8 +1,15 @@
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import Courses from "./components/Courses/Courses";
+import Cart from "./components/Cart/Cart";
 import { useEffect, useState } from "react";
 function App() {
   const [course, setCourse] = useState([]);
-  console.log(course);
+  const [cart, setCart] = useState([]);
+  const addHandler = (data) => {
+    const newCart = [...cart, data];
+    setCart(newCart);
+  };
   useEffect(() => {
     fetch("data.json", {
       headers: {
@@ -12,22 +19,32 @@ function App() {
     })
       .then((res) => res.json())
       .then((dat) => {
-        console.log(dat);
         setCourse(dat);
       });
   }, []);
   return (
     <div className="App">
-      <div className="logo bg-primary">
-        <img src="logo3.png" alt="logo" />
+      <div className="logo">
+        <img src="logo.png" alt="logo" />
       </div>
 
-      {course.map((d) => (
+      <div className="course-container">
         <div className="course-section">
-          <p>{d.title}</p>
-          <img src={d.imgUrl} alt={d.title} />
+          {course.map((d) => (
+            <Courses
+              name={d.title}
+              img={d.imgUrl}
+              instructor={d.instructor}
+              price={d.price}
+              key={d.id}
+              addHandler={addHandler}
+            ></Courses>
+          ))}
         </div>
-      ))}
+        <div className="course-cart-sec">
+          <Cart cart={cart}></Cart>
+        </div>
+      </div>
     </div>
   );
 }
